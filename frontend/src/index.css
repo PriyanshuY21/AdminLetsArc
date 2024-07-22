@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.Montserrat {
+    font-family: "Montserrat", sans-serif;
+}
+.Pacifico {
+    font-family: "Pacifico", cursive;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.custom-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}
+
+@layer components {
+    .btn {
+        @apply font-outfit font-semibold py-2 px-4 rounded-lg shadow-md flex gap-2 items-center justify-center;
+    }
+
+    .btn.btn-light {
+        @apply bg-white1 text-gray-500 hover:text-gray-700 shadow-white3/40 border border-gray-300;
+    }
+
+    .btn.btn-danger {
+        @apply bg-red-600 text-white1 shadow-red-400/40;
+    }
+
+    .btn.btn-add {
+        @apply bg-blue1 text-white1 shadow-blue1/40;
+    }
+}
+
+.opacity-transition {
+    transition: opacity 0.3s ease-in-out;
+    /* Adjust the duration and easing as needed */
+}
+
+.opacity-0 {
+    opacity: 0;
+}
+
+.opacity-100 {
+    opacity: 1;
+}
+
+.error {
+    color: #f66464;
+    font-size: 0.9rem;
+    text-align: left;
+}
