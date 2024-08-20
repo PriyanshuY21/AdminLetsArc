@@ -8,7 +8,8 @@ const Add = ({ onBackClick }) => {
     organizationName: '',
     organizationRole: '',
     email: '',
-    contact: ''
+    contact: '',
+    password: '' 
   });
   const [message, setMessage] = useState('');
 
@@ -19,14 +20,14 @@ const Add = ({ onBackClick }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { firstName, lastName, organizationName, organizationRole, email, contact } = formData;
-    if (!firstName || !lastName || !organizationName || !organizationRole || !email || !contact) {
+    const { firstName, lastName, organizationName, organizationRole, email, contact, password } = formData;
+    if (!firstName || !lastName || !organizationName || !organizationRole || !email || !contact || !password) {
       setMessage('Please fill out all fields.');
       return;
     }
 
     try {
-      await axios.post('http://localhost:5000/api/users', formData);
+      await axios.post('http://localhost:5007/api/users', formData);
       setMessage('Client details have been added.');
       setFormData({
         firstName: '',
@@ -34,7 +35,8 @@ const Add = ({ onBackClick }) => {
         organizationName: '',
         organizationRole: '',
         email: '',
-        contact: ''
+        contact: '',
+        password: ''
       });
     } catch (err) {
       console.error(err);
@@ -108,6 +110,17 @@ const Add = ({ onBackClick }) => {
               id="contact"
               placeholder="Contact Number"
               value={formData.contact}
+              onChange={handleChange}
+              className="w-full p-2 border rounded border-gray-300"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-2" htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              value={formData.password}
               onChange={handleChange}
               className="w-full p-2 border rounded border-gray-300"
             />

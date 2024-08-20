@@ -20,7 +20,7 @@ const Upload = ({ onBackClick }) => {
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users');
+        const response = await axios.get('http://localhost:5007/api/users');
         setClients(response.data);
       } catch (err) {
         console.error('Error fetching clients:', err);
@@ -45,7 +45,7 @@ const Upload = ({ onBackClick }) => {
     }
 
     try {
-      await axios.post('http://localhost:5001/api/adminprojects', formData);
+      await axios.post('http://localhost:5005/api/adminprojects', formData);
       setFormData(initialFormData);
       setShowDialog(true);
       setError('');

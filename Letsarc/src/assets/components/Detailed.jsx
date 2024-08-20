@@ -21,7 +21,7 @@ const Detailed = ({ project, onUpdateProgress }) => {
 
   const handleMarkComplete = () => {
     const nextStep = completedSteps + 1;
-    onUpdateProgress(project._id, nextStep); // Pass project ID here
+    onUpdateProgress(project._id, nextStep); 
   };
 
   return (

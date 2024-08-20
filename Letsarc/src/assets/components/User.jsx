@@ -7,7 +7,7 @@ const User = () => {
     firstName: '',
     lastName: '',
     organizationName: '',
-    organizationRole: '', // Added field
+    organizationRole: '', 
     email: '',
     contact: ''
   });
@@ -20,7 +20,7 @@ const User = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/users');
+      const res = await axios.get('http://localhost:5007/api/users');
       if (res.data.length > 0) {
         const user = res.data[0];
         setFormData(user);
@@ -39,9 +39,9 @@ const User = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentId) {
-      await axios.put(`http://localhost:5000/api/users/${currentId}`, formData);
+      await axios.put(`http://localhost:5007/api/users/${currentId}`, formData);
     } else {
-      const res = await axios.post('http://localhost:5000/api/users', formData);
+      const res = await axios.post('http://localhost:5007/api/users', formData);
       setCurrentId(res.data._id);
     }
     setEditing(false); 

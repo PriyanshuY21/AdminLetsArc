@@ -9,7 +9,7 @@ const Client = ({ onAddClientClick }) => {
   const [editUser, setEditUser] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/users')
+    fetch('http://localhost:5007/api/users')
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -26,7 +26,7 @@ const Client = ({ onAddClientClick }) => {
   }, []);
 
   const handleDelete = (userId) => {
-    fetch(`http://localhost:5000/api/users/${userId}`, { method: 'DELETE' })
+    fetch(`http://localhost:5007/api/users/${userId}`, { method: 'DELETE' })
       .then(() => {
         setUsers(users.filter((user) => user._id !== userId));
       })
@@ -36,7 +36,7 @@ const Client = ({ onAddClientClick }) => {
   };
 
   const handleEditSave = () => {
-    fetch(`http://localhost:5000/api/users/${editUser._id}`, {
+    fetch(`http://localhost:5007/api/users/${editUser._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

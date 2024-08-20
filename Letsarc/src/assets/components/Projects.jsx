@@ -19,7 +19,7 @@ const Project = ({ onAssignProjectClick }) => {
   const [showOptions, setShowOptions] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/adminprojects')
+    fetch('http://localhost:5005/api/adminprojects')
       .then(response => response.json())
       .then(data => {
         setProjects(data);
@@ -30,7 +30,7 @@ const Project = ({ onAssignProjectClick }) => {
   }, []);
 
   const handleDelete = (projectName) => {
-    fetch(`http://localhost:5001/api/adminprojects/${projectName}`, { method: 'DELETE' })
+    fetch(`http://localhost:5005/api/adminprojects/${projectName}`, { method: 'DELETE' })
       .then(() => {
         setProjects(projects.filter((project) => project.projectName !== projectName));
       });
@@ -38,7 +38,7 @@ const Project = ({ onAssignProjectClick }) => {
 
   const handleUpdateProgress = (projectName, nextStep) => {
     const updatedProgress = { completed: nextStep };
-    fetch(`http://localhost:5001/api/adminprojects/${projectName}`, {
+    fetch(`http://localhost:5005/api/adminprojects/${projectName}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ progress: updatedProgress })
@@ -51,7 +51,7 @@ const Project = ({ onAssignProjectClick }) => {
   };
 
   const handleEditSave = (projectId, updatedDetails) => {
-    fetch(`http://localhost:5001/api/adminprojects/${projectId}`, {
+    fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedDetails)
@@ -175,7 +175,7 @@ const Project = ({ onAssignProjectClick }) => {
               Sort By Date <FaChevronDown className="ml-2" />
             </button>
             {showDateDropdown && (
-              <div className="absolute mt-2 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div className="absolute mt-2 z-40 w-full rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                   <button onClick={() => setSortDate('None')} className="block px-4 py-2 text-sm text-gray-700">
                     None

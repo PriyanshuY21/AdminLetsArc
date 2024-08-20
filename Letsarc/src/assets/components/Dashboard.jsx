@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [filter, setFilter] = useState('All');
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/adminprojects')
+    fetch('http://localhost:5005/api/adminprojects')
       .then(response => response.json())
       .then(data => {
         setProjects(data);
@@ -19,7 +19,7 @@ const Dashboard = () => {
   }, []);
 
   const handleDelete = (projectName) => {
-    fetch(`http://localhost:5001/api/adminprojects/${projectName}`, { method: 'DELETE' })
+    fetch(`http://localhost:5005/api/adminprojects/${projectName}`, { method: 'DELETE' })
       .then(() => {
         setProjects(projects.filter((project) => project.projectName !== projectName));
       });
@@ -27,7 +27,7 @@ const Dashboard = () => {
 
   const handleUpdateProgress = (projectId, nextStep) => {
     const updatedProgress = { completed: nextStep };
-    fetch(`http://localhost:5001/api/adminprojects/${projectId}`, {
+    fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ progress: updatedProgress })

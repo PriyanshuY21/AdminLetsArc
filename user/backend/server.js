@@ -20,7 +20,7 @@ mongoose.connect('mongodb+srv://LetsArcMedia:ck2BRsv5h0FvCwcm@letsarcmediadb.nhw
 const userRoutes = require('./Routes/user');
 app.use('/api/users', userRoutes);
 
-const PORT = 5000;
+const PORT = 5007;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
