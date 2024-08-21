@@ -213,10 +213,10 @@ const Project = ({ onAssignProjectClick }) => {
                     onClick={() => setSelectedProject(project)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td className="px-6 py-3 whitespace-nowrap text-sm font-semibold text-text">
+                    <td className="px-6 py-3 whitespace-nowrap text-sm font-normal text-text">
                       {project.projectName}
                     </td>
-                    <td className="px-6 py-3 text-center whitespace-nowrap font-semibold text-sm text-text">
+                    <td className="px-6 py-3 text-center whitespace-nowrap font-normal text-sm text-text">
                       {project.clientName}
                     </td>
                     <td className="px-8 py-3 text-center whitespace-nowrap text-sm text-accent">
@@ -225,7 +225,7 @@ const Project = ({ onAssignProjectClick }) => {
                         total={project.progress.total}
                       />
                     </td>
-                    <td className="px-6 py-3 whitespace-nowrap text-sm font-semibold text-text text-center">{project.date}</td>
+                    <td className="px-6 py-3 whitespace-nowrap text-sm font-normal text-text text-center">{project.date}</td>
                     <td className="px-6 py-3 whitespace-nowrap text-sm text-center text-text relative">
                       {project.progress.completed === project.progress.total && (
                         <FaTrash
