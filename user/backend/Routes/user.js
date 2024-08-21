@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
     const newUser = new User({ 
       ...req.body, 
       password: hashedPassword, 
-      plainPassword: plainPassword // Store plain password
+      plainPassword: plainPassword 
     });
 
     const savedUser = await newUser.save();
@@ -39,7 +39,7 @@ router.put('/:id', async (req, res) => {
     if (req.body.password) {
       const plainPassword = req.body.password;
       updatedUserData.password = await bcrypt.hash(plainPassword, 12);
-      updatedUserData.plainPassword = plainPassword; // Update plain password
+      updatedUserData.plainPassword = plainPassword; 
     }
 
     const updatedUser = await User.findByIdAndUpdate(req.params.id, updatedUserData, { new: true }).select('-password -plainPassword'); 
