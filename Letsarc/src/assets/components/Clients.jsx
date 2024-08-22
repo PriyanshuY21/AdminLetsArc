@@ -47,6 +47,7 @@ const Client = ({ onAddClientClick }) => {
       .then((updatedUser) => {
         setUsers(users.map(user => (user._id === updatedUser._id ? updatedUser : user)));
         setEditUser(null);
+        setShowActions(null); 
       })
       .catch(error => {
         console.error('Error updating user:', error);

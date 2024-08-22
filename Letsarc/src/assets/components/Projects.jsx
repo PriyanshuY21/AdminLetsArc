@@ -262,78 +262,97 @@ const Project = ({ onAssignProjectClick }) => {
         </div>
       </div>
       {editingProject && (
-        <div className="absolute inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-            <h2 className="text-xl font-bold mb-4">Edit Project</h2>
-            <form
-            onSubmit={(e) => {
-           e.preventDefault();
-           handleEditSave(editingProject._id, {
-           firstName: e.target.firstName.value,
-           lastName: e.target.lastName.value,
-           projectName: e.target.projectName.value,
-           clientName: e.target.clientName.value,
-           contactNumber: e.target.contactNumber.value,
-           email: e.target.email.value,
-           date: e.target.date.value,
-           progress: {
-           completed: parseInt(e.target.completed.value),
-           total: parseInt(e.target.total.value),
-          },
-            });
-            }}
+  <div className="absolute inset-0 z-50 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
+      <h2 className="text-xl font-bold mb-4">Edit Project</h2>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleEditSave(editingProject._id, {
+            firstName: e.target.firstName.value,
+            lastName: e.target.lastName.value,
+            projectName: e.target.projectName.value,
+            clientName: e.target.clientName.value, 
+            contactNumber: e.target.contactNumber.value,
+            email: e.target.email.value,
+            date: e.target.date.value,
+            progress: {
+              completed: parseInt(e.target.completed.value),
+              total: parseInt(e.target.total.value),
+            },
+          });
+          setShowOptions(null); 
+        }}
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">First Name</label>
+            <input type="text" name="firstName" defaultValue={editingProject.firstName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Last Name</label>
+            <input type="text" name="lastName" defaultValue={editingProject.lastName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Project Name</label>
+            <input type="text" name="projectName" defaultValue={editingProject.projectName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Client Name</label>
+            <select
+              name="clientName"
+              defaultValue={editingProject.clientName}
+              className="block w-full mt-1 border border-gray-300 rounded-md shadow-sm"
+              required
             >
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">First Name</label>
-                  <input type="text" name="firstName" defaultValue={editingProject.firstName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Last Name</label>
-                  <input type="text" name="lastName" defaultValue={editingProject.lastName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Project Name</label>
-                  <input type="text" name="projectName" defaultValue={editingProject.projectName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Client Name</label>
-                  <input type="text" name="clientName" defaultValue={editingProject.clientName} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Contact Number</label>
-                  <input type="text" name="contactNumber" defaultValue={editingProject.contactNumber} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                  <input type="email" name="email" defaultValue={editingProject.email} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                  <input type="date" name="date" defaultValue={editingProject.date} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Progress Completed</label>
-                  <input type="number" name="completed" defaultValue={editingProject.progress.completed} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Progress Total</label>
-                  <input type="number" name="total" defaultValue={editingProject.progress.total} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
-                </div>
-              </div>
-              <div className="flex items-center justify-end mt-4">
-                <button type="button" onClick={() => setEditingProject(null)} className="bg-gr text-white px-4 py-2 rounded-md mr-2">
-                  Cancel
-                </button>
-                <button type="submit" className="bg-gr text-white px-4 py-2 rounded-md">
-                  Save
-                </button>
-              </div>
-            </form>
+              {clients.map(client => (
+                <option key={client} value={client}>
+                  {client}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Contact Number</label>
+            <input type="text" name="contactNumber" defaultValue={editingProject.contactNumber} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" name="email" defaultValue={editingProject.email} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Start Date</label>
+            <input type="date" name="date" defaultValue={editingProject.date} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Progress Completed</label>
+            <input type="number" name="completed" defaultValue={editingProject.progress.completed} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Progress Total</label>
+            <input type="number" name="total" defaultValue={editingProject.progress.total} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm" required />
           </div>
         </div>
-      )}
-      {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />}
+        <div className="flex items-center justify-end mt-4">
+          <button
+            type="button"
+            onClick={() => {
+              setEditingProject(null);
+              setShowOptions(null); 
+            }}
+            className="bg-gray-600 text-white px-4 py-2 rounded-md mr-2"
+          >
+            Cancel
+          </button>
+          <button type="submit" className="bg-gr text-white px-4 py-2 rounded-md">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+ {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />}
     </div>
   );
 };
