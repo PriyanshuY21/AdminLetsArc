@@ -1,54 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FaSave, FaEdit } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react'; 
+import axios from 'axios'; 
+import { FaSave, FaEdit } from 'react-icons/fa'; 
 
 const User = () => {
+  // Stores form data
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     organizationName: '',
-    organizationRole: '', 
+    organizationRole: '',
     email: '',
     contact: ''
   });
+
+  // Toggles between editing and viewing mode
   const [editing, setEditing] = useState(true);
+
+  // Stores current user's ID
   const [currentId, setCurrentId] = useState(null);
 
+  // Effect to fetch user data when component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
 
+  // Function to fetch user data the server
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5007/api/users');
-      if (res.data.length > 0) {
-        const user = res.data[0];
-        setFormData(user);
-        setCurrentId(user._id);
-        setEditing(false); 
+      const res = await axios.get('http://localhost:5007/api/users'); // Fetch users from API
+      if (res.data.length > 0) { // Check if there are any users
+        const user = res.data[0]; // Get first user (assumes there's at least one user)
+        setFormData(user); // Set form data with fetched user's details
+        setCurrentId(user._id); // Sets current user ID
+        setEditing(false); // Sets editing mode to false as data is being displayed
       }
     } catch (err) {
-      console.error(err);
+      console.error(err); // Log any errors to the console
     }
   };
 
+  // Function to handle input changes in form
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setFormData({ ...formData, [e.target.id]: e.target.value }); // Updates specific field in form data
   };
 
+  // Function to handle form submission (save or update user)
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     if (currentId) {
-      await axios.put(`http://localhost:5007/api/users/${currentId}`, formData);
+      await axios.put(`http://localhost:5007/api/users/${currentId}`, formData); // Update user details
     } else {
-      const res = await axios.post('http://localhost:5007/api/users', formData);
-      setCurrentId(res.data._id);
+      const res = await axios.post('http://localhost:5007/api/users', formData); // Create a new user
+      setCurrentId(res.data._id); // Sets current user ID to newly created user ID
     }
-    setEditing(false); 
+    setEditing(false); // Sets editing mode to false after submission
   };
 
+  // Function to toggle editing mode
   const handleEdit = () => {
-    setEditing(true);
+    setEditing(true); // Sets editing mode to true
   };
 
   return (
@@ -56,6 +66,7 @@ const User = () => {
       <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-6">
         <h2 className="text-2xl font-semibold mb-4 text-center">Welcome!!</h2>
         <form onSubmit={handleSubmit}>
+          {/* Form submission is handled by handleSubmit */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2" htmlFor="firstName">Name</label>
             <div className="flex space-x-4">

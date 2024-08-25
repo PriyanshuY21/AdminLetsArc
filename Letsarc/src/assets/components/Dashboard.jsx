@@ -4,27 +4,32 @@ import ProgressBar from './Progressbar';
 import Detailed from './Detailed';
 
 const Dashboard = () => {
+  // State for managing projects, search term, selected project, and filter
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProject, setSelectedProject] = useState(null);
   const [filter, setFilter] = useState('All');
 
+  // Fetch projects data
   useEffect(() => {
     fetch('http://localhost:5005/api/adminprojects')
       .then(response => response.json())
       .then(data => {
         setProjects(data);
-        setSelectedProject(data[0]);
+        setSelectedProject(data[0]); // Sets first project as selected project initially
       });
   }, []);
 
+  // Handle project deletion
   const handleDelete = (projectName) => {
     fetch(`http://localhost:5005/api/adminprojects/${projectName}`, { method: 'DELETE' })
       .then(() => {
+        // Update state to remove deleted project
         setProjects(projects.filter((project) => project.projectName !== projectName));
       });
   };
 
+  // Handle updating project progress
   const handleUpdateProgress = (projectId, nextStep) => {
     const updatedProgress = { completed: nextStep };
     fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
@@ -34,11 +39,13 @@ const Dashboard = () => {
     })
       .then(response => response.json())
       .then(updatedProject => {
+        // Update state with edited project details
         setProjects(projects.map(project => project._id === projectId ? updatedProject : project));
-        setSelectedProject(updatedProject);
+        setSelectedProject(updatedProject); // Updates selected project
       });
   };
 
+  // Filter projects based on selected filter and search term
   const filteredProjects = projects.filter(project => {
     if (filter === 'All') return true;
     if (filter === 'Ongoing') return project.progress.completed < project.progress.total;
@@ -47,15 +54,12 @@ const Dashboard = () => {
     project.projectName.toLowerCase().includes(searchTerm.toLowerCase()) || project.clientName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Determine row class based on project selection and index
   const getRowClassName = (project, index) => {
     if (project === selectedProject) {
-      return 'bg-nn2';
+      return 'bg-nn2'; // Highlight selected project
     } else {
-      if (index % 2 === 0) {
-        return 'bg-secondary';
-      } else {
-        return 'bg-nn';
-      }
+      return index % 2 === 0 ? 'bg-secondary' : 'bg-nn'; // Alternating row colors
     }
   };
 
@@ -76,7 +80,7 @@ const Dashboard = () => {
               type="text"
               placeholder="Search client or project"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)} 
               className="border border-gray-300 rounded-md px-12 py-2 focus"
               style={{ marginLeft: '19rem' }}
             />
@@ -86,19 +90,19 @@ const Dashboard = () => {
       <div className="flex mb-4">
         <button
           className={`px-4 py-2 rounded-md ml-2 ${filter === 'All' ? 'bg-text text-secondary' : 'bg-gray-200'}`}
-          onClick={() => setFilter('All')}
+          onClick={() => setFilter('All')} 
         >
           All
         </button>
         <button
           className={`px-4 py-2 rounded-md ml-2 ${filter === 'Ongoing' ? 'bg-text text-secondary' : 'bg-gray-200'}`}
-          onClick={() => setFilter('Ongoing')}
+          onClick={() => setFilter('Ongoing')} 
         >
           Ongoing
         </button>
         <button
           className={`px-4 py-2 rounded-md ml-2 ${filter === 'Completed' ? 'bg-text text-secondary' : 'bg-gray-200'}`}
-          onClick={() => setFilter('Completed')}
+          onClick={() => setFilter('Completed')} 
         >
           Completed
         </button>
@@ -120,8 +124,8 @@ const Dashboard = () => {
                 {filteredProjects.map((project, index) => (
                   <tr
                     key={project._id}
-                    className={getRowClassName(project, index)}
-                    onClick={() => setSelectedProject(project)}
+                    className={getRowClassName(project, index)} // Apply row class based on project and index
+                    onClick={() => setSelectedProject(project)} // Set selected project on row click
                     style={{ cursor: 'pointer' }}
                   >
                     <td className="px-6 py-3 whitespace-nowrap text-sm font-normal text-text ">
@@ -133,7 +137,7 @@ const Dashboard = () => {
                     <td className="px-8 py-3 text-center whitespace-nowrap text-sm text-accent">
                       <ProgressBar
                         completed={project.progress.completed}
-                        total={project.progress.total}
+                        total={project.progress.total} // Display progress bar with completed and total progress
                       />
                     </td>
                     <td className="px-6 py-3 whitespace-nowrap text-sm font-normal text-text text-center">{project.date}</td>
@@ -141,7 +145,7 @@ const Dashboard = () => {
                       {project.progress.completed === project.progress.total && (
                         <FaTrash
                           className="cursor-pointer"
-                          onClick={(e) => { e.stopPropagation(); handleDelete(project.projectName); }}
+                          onClick={(e) => { e.stopPropagation(); handleDelete(project.projectName); }} // Prevent event propagation and handle deletion
                         />
                       )}
                     </td>
@@ -152,7 +156,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />}
+      {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />} {/* Render Detailed component for selected project */}
     </div>
   );
 };

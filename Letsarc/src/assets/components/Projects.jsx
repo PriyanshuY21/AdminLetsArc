@@ -4,97 +4,105 @@ import ProgressBar from './Progressbar';
 import Detailed from './Detailed';
 
 const Project = ({ onAssignProjectClick }) => {
-  const [projects, setProjects] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [filter, setFilter] = useState('All');
-  const [clientFilter, setClientFilter] = useState('All');
-  const [sortProgress, setSortProgress] = useState('All');
-  const [sortDate, setSortDate] = useState('None');
-  const [clients, setClients] = useState([]);
-  const [showClientDropdown, setShowClientDropdown] = useState(false);
-  const [showProgressDropdown, setShowProgressDropdown] = useState(false);
-  const [showDateDropdown, setShowDateDropdown] = useState(false);
-  const [editingProject, setEditingProject] = useState(null);
-  const [showOptions, setShowOptions] = useState(null);
+const [projects, setProjects] = useState([]); // Stores list of projects
+const [searchTerm, setSearchTerm] = useState(''); // Manages search input
+const [selectedProject, setSelectedProject] = useState(null); // Tracks currently selected project
+const [filter, setFilter] = useState('All'); // Filters projects by their completion status (Ongoing/Completed/All)
+const [clientFilter, setClientFilter] = useState('All'); // Filters projects by client name
+const [sortProgress, setSortProgress] = useState('All'); // Sorts projects by progress (Completed/Ongoing/All)
+const [sortDate, setSortDate] = useState('None'); // Sorts projects by start date (Earliest/Oldest/None)
+const [clients, setClients] = useState([]); // Stores a list of unique clients
+const [showClientDropdown, setShowClientDropdown] = useState(false); // Toggles visibility of client filter dropdown
+const [showProgressDropdown, setShowProgressDropdown] = useState(false); // Toggles visibility of progress filter dropdown
+const [showDateDropdown, setShowDateDropdown] = useState(false); // Toggles visibility of date sort dropdown
+const [editingProject, setEditingProject] = useState(null); // Tracks project currently being edited
+const [showOptions, setShowOptions] = useState(null); // Toggles the visibility of the options menu for a project
 
-  useEffect(() => {
-    fetch('http://localhost:5005/api/adminprojects')
-      .then(response => response.json())
-      .then(data => {
-        setProjects(data);
-        setSelectedProject(data[0]);
-        const uniqueClients = [...new Set(data.map(project => project.clientName))];
-        setClients(uniqueClients);
-      });
-  }, []);
+// Fetch projects data from the backend on component mount
+useEffect(() => {
+  fetch('http://localhost:5005/api/adminprojects')
+    .then(response => response.json())
+    .then(data => {
+      setProjects(data); // Sets projects data
+      setSelectedProject(data[0]); // Selects first project by default
+      const uniqueClients = [...new Set(data.map(project => project.clientName))]; // Extracts unique client names
+      setClients(uniqueClients); // Sets unique client names
+    });
+}, []);
 
-  const handleDelete = (projectName) => {
-    fetch(`http://localhost:5005/api/adminprojects/${projectName}`, { method: 'DELETE' })
-      .then(() => {
-        setProjects(projects.filter((project) => project.projectName !== projectName));
-      });
-  };
+// Deletes a project by its name
+const handleDelete = (projectName) => {
+  fetch(`http://localhost:5005/api/adminprojects/${projectName}`, { method: 'DELETE' })
+    .then(() => {
+      setProjects(projects.filter((project) => project.projectName !== projectName)); // Removes the deleted project from the state
+    });
+};
 
-  const handleUpdateProgress = (projectName, nextStep) => {
+  // Handle updating project progress
+  const handleUpdateProgress = (projectId, nextStep) => {
     const updatedProgress = { completed: nextStep };
-    fetch(`http://localhost:5005/api/adminprojects/${projectName}`, {
+    fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ progress: updatedProgress })
     })
       .then(response => response.json())
       .then(updatedProject => {
-        setProjects(projects.map(project => project.projectName === projectName ? updatedProject : project));
-        setSelectedProject(updatedProject);
-      });
-  };
-
-  const handleEditSave = (projectId, updatedDetails) => {
-    fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedDetails)
-    })
-      .then(response => response.json())
-      .then(updatedProject => {
+        // Update state with edited project details
         setProjects(projects.map(project => project._id === projectId ? updatedProject : project));
-        setEditingProject(null);
-        setSelectedProject(updatedProject);
+        setSelectedProject(updatedProject); // Updates selected project
       });
   };
-  
-  const filteredProjects = projects.filter(project => {
-    if (filter === 'Ongoing') return project.progress.completed < project.progress.total;
-    if (filter === 'Completed') return project.progress.completed === project.progress.total;
-    return true;
-  }).filter(project => {
-    if (clientFilter === 'All') return true;
-    return project.clientName === clientFilter;
-  }).filter(project =>
-    project.projectName.toLowerCase().includes(searchTerm.toLowerCase()) );
 
-  const sortedProjects = [...filteredProjects].sort((a, b) => {
-    if (sortProgress === 'Completed') return a.progress.completed < b.progress.completed ? 1 : -1;
-    if (sortProgress === 'Ongoing') return a.progress.completed > b.progress.completed ? 1 : -1;
-    return 0;
-  }).sort((a, b) => {
-    if (sortDate === 'Earliest') return new Date(a.date) - new Date(b.date);
-    if (sortDate === 'Oldest') return new Date(b.date) - new Date(a.date);
-    return 0;
-  });
+ // Saves edited project details
+const handleEditSave = (projectId, updatedDetails) => {
+  fetch(`http://localhost:5005/api/adminprojects/${projectId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updatedDetails)
+  })
+    .then(response => response.json())
+    .then(updatedProject => {
+      setProjects(projects.map(project => project._id === projectId ? updatedProject : project)); // Updates project list with edited details
+      setEditingProject(null); // Exits edit mode
+      setSelectedProject(updatedProject); // Updates selected project
+    });
+};
 
-  const getRowClassName = (project, index) => {
-    if (project === selectedProject) {
-      return 'bg-nn2';
+// Filters and sorts projects based on user's selections
+const filteredProjects = projects.filter(project => {
+  if (filter === 'Ongoing') return project.progress.completed < project.progress.total; // Filters ongoing projects
+  if (filter === 'Completed') return project.progress.completed === project.progress.total; // Filters completed projects
+  return true;
+}).filter(project => {
+  if (clientFilter === 'All') return true; // Shows all clients if no specific client is selected
+  return project.clientName === clientFilter; // Filters by selected client name
+}).filter(project =>
+  project.projectName.toLowerCase().includes(searchTerm.toLowerCase()) // Filters by search term
+);
+
+const sortedProjects = [...filteredProjects].sort((a, b) => {
+  if (sortProgress === 'Completed') return a.progress.completed < b.progress.completed ? 1 : -1; // Sorts by completed progress
+  if (sortProgress === 'Ongoing') return a.progress.completed > b.progress.completed ? 1 : -1; // Sorts by ongoing progress
+  return 0;
+}).sort((a, b) => {
+  if (sortDate === 'Earliest') return new Date(a.date) - new Date(b.date); // Sorts by earliest date
+  if (sortDate === 'Oldest') return new Date(b.date) - new Date(a.date); // Sorts by oldest date
+  return 0;
+});
+
+// Determines class name for each table row based on selected project and index
+const getRowClassName = (project, index) => {
+  if (project === selectedProject) {
+    return 'bg-nn2'; // Highlights the selected project
+  } else {
+    if (index % 2 === 0) {
+      return 'bg-secondary'; // Alternates row color for even rows
     } else {
-      if (index % 2 === 0) {
-        return 'bg-secondary';
-      } else {
-        return 'bg-nn';
-      }
+      return 'bg-nn'; // Alternates row color for odd rows
     }
-  };
+  }
+};
 
   return (
     <div className="flex flex-col p-4 h-full">
@@ -352,7 +360,7 @@ const Project = ({ onAssignProjectClick }) => {
     </div>
   </div>
 )}
- {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />}
+  {selectedProject && <Detailed project={selectedProject} onUpdateProgress={handleUpdateProgress} />} {/* Render Detailed component for selected project */}
     </div>
   );
 };

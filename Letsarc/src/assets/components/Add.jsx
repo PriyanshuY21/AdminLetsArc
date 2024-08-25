@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const Add = ({ onBackClick }) => {
+  // Manages form data
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -11,24 +12,32 @@ const Add = ({ onBackClick }) => {
     contact: '',
     password: '' 
   });
+
+  // Manage the message to be displayed after submission
   const [message, setMessage] = useState('');
 
+  // Handler for form input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  // Handler for form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const { firstName, lastName, organizationName, organizationRole, email, contact, password } = formData;
+
+    // Checks if all fields are filled
     if (!firstName || !lastName || !organizationName || !organizationRole || !email || !contact || !password) {
       setMessage('Please fill out all fields.');
-      return;
+      return; // Exits if any field is empty
     }
 
     try {
+      // Sends POST request to add client details
       await axios.post('http://localhost:5007/api/users', formData);
-      setMessage('Client details have been added.');
+      setMessage('Client details have been added.'); // Success message
+      // Resets form fields after successful submission
       setFormData({
         firstName: '',
         lastName: '',
@@ -40,7 +49,7 @@ const Add = ({ onBackClick }) => {
       });
     } catch (err) {
       console.error(err);
-      setMessage('Failed to add client details.');
+      setMessage('Failed to add client details.'); // Error message
     }
   };
 
@@ -125,11 +134,15 @@ const Add = ({ onBackClick }) => {
               className="w-full p-2 border rounded border-gray-300"
             />
           </div>
+
+          {/* Display message based on success or failure */}
           {message && (
             <div className={`mb-4 text-center ${message.includes('added') ? 'text-green-500' : 'text-red-500'}`}>
               {message}
             </div>
           )}
+
+          {/* Buttons for navigating back and submitting the form */}
           <div className="flex justify-center space-x-4">
             <button type="button" onClick={onBackClick} className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-opacity duration-300">
               Back

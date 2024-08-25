@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { FaSearch, FaEllipsisH } from 'react-icons/fa';
 
 const Client = ({ onAddClientClick }) => {
+  // State for managing user list, search term, selected user, actions menu, and edit user
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [showActions, setShowActions] = useState(null);
   const [editUser, setEditUser] = useState(null);
 
+  // Fetch users data 
   useEffect(() => {
     fetch('http://localhost:5007/api/users')
       .then(response => {
@@ -18,16 +20,18 @@ const Client = ({ onAddClientClick }) => {
       })
       .then(data => {
         setUsers(data);
-        setSelectedUser(data[0]);
+        setSelectedUser(data[0]); // Sets first user as the selected user initially
       })
       .catch(error => {
         console.error('Error fetching users:', error);
       });
   }, []);
 
+  // Handle user deletion
   const handleDelete = (userId) => {
     fetch(`http://localhost:5007/api/users/${userId}`, { method: 'DELETE' })
       .then(() => {
+        // Update state to remove the deleted user
         setUsers(users.filter((user) => user._id !== userId));
       })
       .catch(error => {
@@ -35,6 +39,7 @@ const Client = ({ onAddClientClick }) => {
       });
   };
 
+  // Handle user details update
   const handleEditSave = () => {
     fetch(`http://localhost:5007/api/users/${editUser._id}`, {
       method: 'PUT',
@@ -45,30 +50,29 @@ const Client = ({ onAddClientClick }) => {
     })
       .then(response => response.json())
       .then((updatedUser) => {
+        // Update state with the edited user details
         setUsers(users.map(user => (user._id === updatedUser._id ? updatedUser : user)));
-        setEditUser(null);
-        setShowActions(null); 
+        setEditUser(null); // Clear the edit mode
+        setShowActions(null); // Hide actions menu
       })
       .catch(error => {
         console.error('Error updating user:', error);
       });
   };
 
+  // Filter users based on search term
   const filteredUsers = users.filter(user =>
     `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.organizationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.organizationRole.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Determine row class based on user selection and index
   const getRowClassName = (user, index) => {
     if (user === selectedUser) {
-      return 'bg-nn2';
+      return 'bg-nn2'; // Highlight selected user
     } else {
-      if (index % 2 === 0) {
-        return 'bg-secondary';
-      } else {
-        return 'bg-nn';
-      }
+      return index % 2 === 0 ? 'bg-secondary' : 'bg-nn'; // Alternating row colors
     }
   };
 
@@ -89,7 +93,7 @@ const Client = ({ onAddClientClick }) => {
             type="text"
             placeholder="Search Organisation or Client"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearchTerm(e.target.value)} // Update search term
             className="border border-nc rounded-md pl-10 pr-10 py-2"
           />
         </div>
@@ -112,23 +116,24 @@ const Client = ({ onAddClientClick }) => {
                 {filteredUsers.map((user, index) => (
                   <tr
                     key={user._id}
-                    className={getRowClassName(user, index)}
-                    onClick={() => setSelectedUser(user)}
+                    className={getRowClassName(user, index)} // Apply row class based on user and index
+                    onClick={() => setSelectedUser(user)} // Select user on row click
                     style={{ cursor: 'pointer' }}
                   >
                     {editUser && editUser._id === user._id ? (
+                      // Render editable row when in edit mode
                       <>
                         <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-text">
                           <input
                             type="text"
                             value={editUser.firstName}
-                            onChange={(e) => setEditUser({ ...editUser, firstName: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, firstName: e.target.value })} // Update first name
                             className="border border-gray-300 rounded-md p-1"
                           />
                           <input
                             type="text"
                             value={editUser.lastName}
-                            onChange={(e) => setEditUser({ ...editUser, lastName: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, lastName: e.target.value })} // Update last name
                             className="border border-gray-300 rounded-md p-1"
                           />
                         </td>
@@ -136,7 +141,7 @@ const Client = ({ onAddClientClick }) => {
                           <input
                             type="text"
                             value={editUser.organizationName}
-                            onChange={(e) => setEditUser({ ...editUser, organizationName: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, organizationName: e.target.value })} // Update organization name
                             className="border border-gray-300 rounded-md p-1"
                           />
                         </td>
@@ -144,7 +149,7 @@ const Client = ({ onAddClientClick }) => {
                           <input
                             type="text"
                             value={editUser.organizationRole}
-                            onChange={(e) => setEditUser({ ...editUser, organizationRole: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, organizationRole: e.target.value })} // Update organization role
                             className="border border-gray-300 rounded-md p-1"
                           />
                         </td>
@@ -152,7 +157,7 @@ const Client = ({ onAddClientClick }) => {
                           <input
                             type="email"
                             value={editUser.email}
-                            onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, email: e.target.value })} // Update email
                             className="border border-gray-300 rounded-md p-1"
                           />
                         </td>
@@ -160,15 +165,16 @@ const Client = ({ onAddClientClick }) => {
                           <input
                             type="text"
                             value={editUser.contact}
-                            onChange={(e) => setEditUser({ ...editUser, contact: e.target.value })}
+                            onChange={(e) => setEditUser({ ...editUser, contact: e.target.value })} // Update contact number
                             className="border border-gray-300 rounded-md p-1"
                           />
                         </td>
                         <td className="px-6 py-3 whitespace-nowrap text-sm text-center text-text">
-                          <button onClick={handleEditSave} className="bg-green-500 text-white px-4 py-1 rounded-md">Save</button>
+                          <button onClick={handleEditSave} className="bg-green-500 text-white px-4 py-1 rounded-md">Save</button> {/* Save changes */}
                         </td>
                       </>
                     ) : (
+                      // Render non-editable row
                       <>
                         <td className="px-6 py-3 whitespace-nowrap text-sm font-medium text-text">
                           {`${user.firstName} ${user.lastName}`}
@@ -186,19 +192,19 @@ const Client = ({ onAddClientClick }) => {
                         <td className="px-6 py-3 whitespace-nowrap text-sm text-center text-text relative">
                           <FaEllipsisH
                             className="ml-4 cursor-pointer"
-                            onClick={() => setShowActions(showActions === user._id ? null : user._id)}
+                            onClick={() => setShowActions(showActions === user._id ? null : user._id)} // Toggle actions menu
                           />
                           {showActions === user._id && (
                             <div className="absolute right-0 z-40 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg">
                               <button
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => setEditUser(user)}
+                                onClick={() => setEditUser(user)} // Set user for editing
                               >
                                 Edit
                               </button>
                               <button
                                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                onClick={() => handleDelete(user._id)}
+                                onClick={() => handleDelete(user._id)} // Delete user
                               >
                                 Delete
                               </button>
